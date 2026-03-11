@@ -1,0 +1,19 @@
+{
+  "Species": [
+    {"id": "A","initial": 100},
+    {"id": "B","initial": 250}
+  ],
+  "Reactions": [
+    {"id": "r1",
+      "Reactants": ["A"],
+      "Products": ["B"],
+      "rate_law": "k1 * A",
+      "Parameters": {"k1": 0.1}
+    }
+  ],
+  "Simulation": {
+    "t_end": 100,
+    "dt": 0.1,
+    "method": "Euler"
+  }
+}

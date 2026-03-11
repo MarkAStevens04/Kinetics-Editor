@@ -1,3 +1,6 @@
+from sympy import symbols, lambdify
+from sympy.parsing.sympy_parser import parse_expr
+
 class Reaction:
     def __init__(self):
         """
@@ -27,14 +30,14 @@ class Reaction:
         product_id = product.get_id()
         self.products[product_id] = product
 
-    def add_parameter(self, param):
+    def add_parameters(self, param_dict):
         """
-        Adds a parameter to this object's internal storage of parameters
-        :param param: Parameter in this reaction
+        Adds parameters to this object's internal storage of parameters
+        :param param_dict: parameter dictionary ex. {"k1": 100, "k2": 1000}
         :return: None
         """
-        param_id = param.get_id()
-        self.params[param_id] = param
+        for param_id, param_value in param_dict.items():
+            self.params[param_id] = (param_value, symbols(param_id))
 
     def interpret_rate_law(self, rate_string):
         """
@@ -57,6 +60,72 @@ class Reaction:
         #
         # f = lambdify((A, B, C), expr)
         # print(f(2, 6, 3)) (result is 4)
+
+        # POSSIBLE ERROR:
+        # MAYBE WE SHOULD CREATE A SYMBOL MAPPING OUR SIMULATION INSTEAD??
+        # That way our rate laws don't just have to rely on concentrations of our reactants and products
+
+        # Takes a dictionary item ('Invertase', <species object>) and
+        # returns a  dictionary item ('Invertase', SymPy symbol for Invertase)
+        def get_species_symbols(species_tuple):
+            species_id = species_tuple[0]
+            species_obj = species_tuple[1]
+            return species_id, species_obj.get_symbol()
+
+        # Transforms our self.reactants and self.products into dictionaries mapping their ids to symbols
+        reactant_dict = dict(map(get_species_symbols, self.reactants.items()))
+        product_dict = dict(map(get_species_symbols, self.products.items()))
+
+        # Takes a dictionary item ('k1', (100, SymPy symbol for k1)) and
+        # returns a  dictionary item ('k1', SymPy symbol for k1)
+        def get_parameter_symbols(parameter_tuple):
+            parameter_id = parameter_tuple[0]
+            parameter_symbol = parameter_tuple[1][1]
+            return parameter_id, parameter_symbol
+
+        # Transforms our self.params into dictionaries mapping their ids to symbols
+        parameter_dict = dict(map(get_parameter_symbols, self.params.items()))
+
+        # Combines our reactant, product, and parameter dictionaries
+        symbol_dict = reactant_dict | product_dict | parameter_dict
+
+        # Creates a sympy expression
+        expr = parse_expr(rate_string, local_dict=symbol_dict)
+
+        # Save this expression
+        self.rate_law = expr
+
+        print(f'expr: {self.rate_law}')
+
+        # species_dict = {species_id: species_obj.get_value() for species_id, species_obj in self.reactants.items()}
+        # param_dict = {param_id: param_tup[0] for param_id, param_tup in self.params.items()}
+        # print(f'species_dict: {species_dict | param_dict}')
+        # print(f'Change: {self.evaluate_rate_law(species_dict | param_dict)}')
+
+        # ToDo:
+        # Lowkey don't use the base_reaction to perform calculations.
+        # Use the simulation to store these expressions and perform the calculations for you!
+        # Make like an `optimized_euler` method that turns all this info into a few, hard-to-interpret numpy arrays
+        # that just chug through the simulation super quickly.
+
+
+
+
+
+    def evaluate_rate_law(self, species_dict):
+        """
+        Evaluates the rate law
+        :param species_dict: Map of species_ids to the values, ex: {"A": 100, "B": 200}
+        :return: Dictionary with relative change for each species
+        """
+        change = self.rate_law.subs(species_dict)
+        sub_dict = {species_id: -1 * change for species_id in self.reactants}
+        add_dict = {species_id: change for species_id in self.products}
+        return sub_dict | add_dict
+
+
+    def get_id(self):
+        return self.id
 
 
     def open_json(self, json, simulation):
@@ -91,13 +160,8 @@ class Reaction:
         # ========== 2. ==========
         # Populate Parameters
 
-        for param_id in json['Parameters']:
-
-            # Get the relevant Parameter from our simulation
-            parameter_object = simulation.get_parameter(param_id)
-
-            # Adds parameter object to internal parameter storage
-            self.add_parameter(parameter_object)
+        # Adds parameter object to internal parameter storage
+        self.add_parameters(json['Parameters'])
 
 
         # ========== 3. ==========

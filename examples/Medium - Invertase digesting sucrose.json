@@ -1,0 +1,34 @@
+{
+  "Species": [
+    {"id": "Invertase","initial": 100},
+    {"id": "Sucrose","initial": 250},
+    {"id": "Invertase_Sucrose_Complex","initial": 0},
+    {"id": "Glucose","initial": 0},
+    {"id": "Fructose","initial": 0}
+  ],
+  "Reactions": [
+    {"id": "r1_f",
+      "Reactants": ["Invertase", "Sucrose"],
+      "Products": ["Invertase_Sucrose_Complex"],
+      "rate_law": "k1_f * Invertase * Sucrose",
+      "Parameters": {"k1_f": 100000}
+    },
+    {"id": "r1_r",
+      "Reactants": ["Invertase_Sucrose_Complex"],
+      "Products": ["Invertase", "Sucrose"],
+      "rate_law": "k1_r * Invertase_Sucrose_Complex",
+      "Parameters": {"k1_r": 1650}
+    },
+    {"id": "r2",
+      "Reactants": ["Invertase_Sucrose_Complex"],
+      "Products": ["Glucose", "Fructose"],
+      "rate_law": "k2 * Invertase_Sucrose_Complex",
+      "Parameters": {"k2": 250}
+    }
+  ],
+  "Simulation": {
+    "t_end": 100,
+    "dt": 0.1,
+    "method": "Euler"
+  }
+}
