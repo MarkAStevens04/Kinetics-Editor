@@ -47,6 +47,16 @@ class Reaction:
         # Benefits of symbolic computation
         # https://docs.sympy.org/latest/tutorials/intro-tutorial/intro.html#what-is-symbolic-computation
 
+        # Something like...
+        # from sympy import symbols, lambdify
+        # from sympy.parsing.sympy_parser import parse_expr
+        #
+        # A, B, C = symbols('A B C')
+        # expr_str = "A + (B / C)"
+        # expr = parse_expr(expr_str, local_dict={"A": A, "B": B, "C": C}
+        #
+        # f = lambdify((A, B, C), expr)
+        # print(f(2, 6, 3)) (result is 4)
 
 
     def open_json(self, json, simulation):
