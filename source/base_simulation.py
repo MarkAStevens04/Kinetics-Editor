@@ -131,11 +131,8 @@ class Simulation:
 
                 # Add this rate to the current species' differential equation
                 self.eqn_list[spec_idx] = self.eqn_list[spec_idx] + curr_rate_law
-            
 
-        print(f'diff eqns: {self.eqn_list}')
-        print(f'map: {self.species_map}')
-
+        return self.species_map, self.eqn_list
 
 
     def solve_via_scipy(self):
@@ -183,46 +180,26 @@ class Simulation:
             # Add the value of this parameter to our list of parameter values
             param_vals[i] = param_val
 
-        # Insert time into our list of symbols
-        # symbol_list.insert(0, t)
-
-        # Add parameters to our symbol list and initial value list
-        # symbol_list.extend(param_symbols)
-        # initial_vals.extend(param_vals)
-        # test = *symbol_list, *param_symbols
-        print(f'symbol list: {symbol_list}')
-        print(f'initial vals: {initial_vals}')
-        print(f'eqn list: {self.eqn_list}')
-        combined = (*symbol_list, *param_symbols)
-        print(f'combined: {combined}')
 
         # Now create a lambda function which can evaluate the rates for all species given some set of initial conditions
         # ToDo: For lambdify, look into "cse" to precompute hard computations
         f = lambdify((t, symbol_list, *param_symbols), self.eqn_list)
 
-        print(f'f val: {f(0, initial_vals, *param_vals)}')
-
-
         # Evaluate integral from t=0 to t=self.t_end with step size self.dt
         t_eval = np.arange(0, self.t_end, self.dt)
-
-        print(f'initial vals: {initial_vals}')
-
-        print(f'y0 = {[*initial_vals, *param_vals]}')
-
-        print(f"we'll use {t_eval.shape} steps!")
 
         # Evaluate our solution using scipy
         solution = scipy.integrate.solve_ivp(fun=f, t_span=(0, self.t_end), y0=initial_vals, t_eval=t_eval, args=param_vals)
 
+        # Plot our result!
         y = solution.y
         import matplotlib.pyplot as plt
         plt.plot(t_eval, y.T)
         plt.xlabel('time')
         plt.ylabel('concentration')
 
+        # Create sorted list of labels
         labels = [name for name, idx in sorted(self.species_map.items(), key=lambda item: item[1])]
-        print(f'labels: {labels}')
         plt.legend(labels, shadow=True)
 
         plt.show()

@@ -95,8 +95,6 @@ class Reaction:
         # Save this expression
         self.rate_law = expr
 
-        print(f'expr: {self.rate_law}')
-
         # species_dict = {species_id: species_obj.get_value() for species_id, species_obj in self.reactants.items()}
         # param_dict = {param_id: param_tup[0] for param_id, param_tup in self.params.items()}
         # print(f'species_dict: {species_dict | param_dict}')
