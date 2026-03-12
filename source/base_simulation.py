@@ -263,9 +263,10 @@ class Simulation:
 
 if __name__ == '__main__':
     sim = Simulation()
-    # sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+
     # sim.open_json('examples/Easy - 2 Protein Interaction.json')
-    sim.open_json('examples/Hard - Repressilator Circuit.json')
+    sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+    # sim.open_json('examples/Hard - Repressilator Circuit.json')
 
     print(f'Species:')
     for spec in sim.species:

@@ -11,24 +11,24 @@
       "Reactants": ["Invertase", "Sucrose"],
       "Products": ["Invertase_Sucrose_Complex"],
       "rate_law": "k1_f * Invertase * Sucrose",
-      "Parameters": {"k1_f": 100000}
+      "Parameters": {"k1_f": 10}
     },
     {"id": "r1_r",
       "Reactants": ["Invertase_Sucrose_Complex"],
       "Products": ["Invertase", "Sucrose"],
       "rate_law": "k1_r * Invertase_Sucrose_Complex",
-      "Parameters": {"k1_r": 1650}
+      "Parameters": {"k1_r": 0.1650}
     },
     {"id": "r2",
       "Reactants": ["Invertase_Sucrose_Complex"],
       "Products": ["Glucose", "Fructose", "Invertase"],
       "rate_law": "k2 * Invertase_Sucrose_Complex",
-      "Parameters": {"k2": 250}
+      "Parameters": {"k2": 0.0250}
     }
   ],
   "Simulation": {
-    "t_end": 10,
-    "dt": 0.1,
+    "t_end": 300,
+    "dt": 1,
     "method": "Euler"
   }
 }
