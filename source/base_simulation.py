@@ -14,6 +14,9 @@ class Simulation:
         self.species = {}
         self.reactions = {}
 
+        self.species_map = {}
+        self.eqn_list = []
+
     def initialize_self(self, JSON):
         """
         Initializes the state of the simulation using extract of json
@@ -85,15 +88,15 @@ class Simulation:
         """
         # We must turn our unordered dictionary of items into an ordered list of differential equations.
         # Start by creating an index map which given some species, tells us the index to refer to.
-        species_map = {}
+        self.species_map = {}
 
         # Create an array to store our differential equations.
-        eqn_list = []
+        self.eqn_list = []
 
+        # Populate our species map and equation list
         for i, species in enumerate(self.species):
-            print(f'i: {i}, species: {species}')
-            species_map[species] = i
-            eqn_list.append(0)
+            self.species_map[species] = i
+            self.eqn_list.append(0)
 
         # Go through all of our reactions and add their differential equations
         for _, rxn_obj in self.reactions.items():
@@ -104,25 +107,29 @@ class Simulation:
             for reactant_id in rxn_obj.reactants:
 
                 # Get the index of our species in the equation list
-                spec_idx = species_map[reactant_id]
+                spec_idx = self.species_map[reactant_id]
 
                 # Subtract this rate from the current species' differential equation
-                eqn_list[spec_idx] = eqn_list[spec_idx] - curr_rate_law
+                self.eqn_list[spec_idx] = self.eqn_list[spec_idx] - curr_rate_law
 
             # To all of our PRODUCTS, add the rate law
             for product_id in rxn_obj.products:
 
                 # Get the index of our species in the equation list
-                spec_idx = species_map[product_id]
+                spec_idx = self.species_map[product_id]
 
                 # Add this rate to the current species' differential equation
-                eqn_list[spec_idx] = eqn_list[spec_idx] + curr_rate_law
+                self.eqn_list[spec_idx] = self.eqn_list[spec_idx] + curr_rate_law
             
 
-        print(f'diff eqns: {eqn_list}')
-        print(f'map: {species_map}')
-        return species_map, eqn_list
+        print(f'diff eqns: {self.eqn_list}')
+        print(f'map: {self.species_map}')
 
+
+    def solve_via_scipy(self, species_map, eqn_list):
+        """
+        Solves the IVP given a species map and equation list. 
+        """
 
 
     def initialize_simulation(self, JSON):
