@@ -198,9 +198,10 @@ class Simulation:
 
         # Now create a lambda function which can evaluate the rates for all species given some set of initial conditions
         # ToDo: For lambdify, look into "cse" to precompute hard computations
-        f = lambdify((t, (*symbol_list, *param_symbols)), self.eqn_list)
+        f = lambdify((t, symbol_list, *param_symbols), self.eqn_list)
 
-        print(f'f val: {f(0, (*initial_vals, *param_vals))}')
+        print(f'f val: {f(0, initial_vals, *param_vals)}')
+
 
         # Evaluate integral from t=0 to t=self.t_end with step size self.dt
         t_eval = np.arange(0, self.t_end, self.dt)
@@ -209,8 +210,22 @@ class Simulation:
 
         print(f'y0 = {[*initial_vals, *param_vals]}')
 
+        print(f"we'll use {t_eval.shape} steps!")
+
         # Evaluate our solution using scipy
-        solution = scipy.integrate.solve_ivp(fun=f, t_span=(0, self.t_end), y0=(*initial_vals, *param_vals), t_eval=t_eval)
+        solution = scipy.integrate.solve_ivp(fun=f, t_span=(0, self.t_end), y0=initial_vals, t_eval=t_eval, args=param_vals)
+
+        y = solution.y
+        import matplotlib.pyplot as plt
+        plt.plot(t_eval, y.T)
+        plt.xlabel('time')
+        plt.ylabel('concentration')
+
+        labels = [name for name, idx in sorted(self.species_map.items(), key=lambda item: item[1])]
+        print(f'labels: {labels}')
+        plt.legend(labels, shadow=True)
+
+        plt.show()
 
         print(f'solution: {solution}')
 
@@ -271,7 +286,8 @@ class Simulation:
 
 if __name__ == '__main__':
     sim = Simulation()
-    sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+    # sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+    sim.open_json('examples/Easy - 2 Protein Interaction.json')
 
     print(f'Species:')
     for spec in sim.species:
