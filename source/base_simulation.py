@@ -158,6 +158,7 @@ class Simulation:
             initial_vals[species_idx] = species_obj.get_value()
         
 
+        # Can check if it's a symbol with isinstance(x, sympy.Symbol)
         symbol_list.insert(0, t)
         print(f'symbol list: {symbol_list}')
 
