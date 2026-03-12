@@ -2,6 +2,7 @@ import json
 
 import numpy as np
 from sympy import symbols, lambdify
+import sympy
 import scipy.integrate
 
 # May need to change to source.base_species
@@ -15,6 +16,7 @@ class Simulation:
         self.method = None
         self.species = {}
         self.reactions = {}
+        self.params = {}
 
         self.species_map = {}
         self.eqn_list = []
@@ -59,7 +61,7 @@ class Simulation:
 
     def initialize_reactions(self, JSON):
         """
-        Initializes the reactions and saves to local storage
+        Initializes the reactions and saves to local storage. Initializes params as well.
         :param JSON: JSON format for all the reactions
         :return:
         """
@@ -81,6 +83,13 @@ class Simulation:
 
             # Save this reaction object to the Simulation's dictionary
             self.reactions[reaction_id] = reaction_object
+
+            # POSSIBLE ERROR:
+            # If same param referenced in multiple equations, this will NOT work. It would be better
+            # to just create parameter objects.
+            self.params = self.params | reaction_object.params
+
+
     
     def generate_equations(self):
         """
@@ -128,6 +137,7 @@ class Simulation:
         print(f'map: {self.species_map}')
 
 
+
     def solve_via_scipy(self):
         """
         Solves the IVP using scipy.
@@ -139,10 +149,16 @@ class Simulation:
         t = symbols('t')
 
         # Create array which we'll use to store our SymPy symbols
-        symbol_list = [0 for i in range(len(self.species_map))]
+        symbol_list = [0 for _ in range(len(self.species_map))]
 
-        # Create array which we'll use to store the inital values of our speciess
-        initial_vals = [0 for i in range(len(self.species_map))]
+        # Create array which we'll use to store the inital values of our species
+        initial_vals = [0 for _ in range(len(self.species_map))]
+
+        # Create array for param symbols
+        param_symbols = [0 for _ in range(len(self.params))]
+
+        # Create array for param values
+        param_vals = [0 for _ in range(len(self.params))]
 
         # Iterate through all species in our species map, and add their symbol to the corresponding index i the symbol list
         # Also save their initial value to an initial_value list
@@ -156,22 +172,45 @@ class Simulation:
 
             # Insert in the correct position the initial value for this object
             initial_vals[species_idx] = species_obj.get_value()
-        
 
-        # Can check if it's a symbol with isinstance(x, sympy.Symbol)
-        symbol_list.insert(0, t)
+
+        # Add our parameters from our reactions as well
+        for i, (param_id, (param_val, param_symbol)) in enumerate(self.params.items()):
+
+            # Add our parameter symbol to our list of parameter symbols
+            param_symbols[i] = param_symbol
+
+            # Add the value of this parameter to our list of parameter values
+            param_vals[i] = param_val
+
+        # Insert time into our list of symbols
+        # symbol_list.insert(0, t)
+
+        # Add parameters to our symbol list and initial value list
+        # symbol_list.extend(param_symbols)
+        # initial_vals.extend(param_vals)
+        # test = *symbol_list, *param_symbols
         print(f'symbol list: {symbol_list}')
+        print(f'initial vals: {initial_vals}')
+        print(f'eqn list: {self.eqn_list}')
+        combined = (*symbol_list, *param_symbols)
+        print(f'combined: {combined}')
 
         # Now create a lambda function which can evaluate the rates for all species given some set of initial conditions
-        f = lambdify(symbol_list, self.eqn_list)
+        # ToDo: For lambdify, look into "cse" to precompute hard computations
+        f = lambdify((t, (*symbol_list, *param_symbols)), self.eqn_list)
 
-        print(f'f val: {f(initial_vals)}')
+        print(f'f val: {f(0, (*initial_vals, *param_vals))}')
 
         # Evaluate integral from t=0 to t=self.t_end with step size self.dt
         t_eval = np.arange(0, self.t_end, self.dt)
 
+        print(f'initial vals: {initial_vals}')
+
+        print(f'y0 = {[*initial_vals, *param_vals]}')
+
         # Evaluate our solution using scipy
-        solution = scipy.integrate.solve_ivp(f, (0, self.t_end), initial_vals, t_eval=t_eval)
+        solution = scipy.integrate.solve_ivp(fun=f, t_span=(0, self.t_end), y0=(*initial_vals, *param_vals), t_eval=t_eval)
 
         print(f'solution: {solution}')
 
