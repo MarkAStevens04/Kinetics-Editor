@@ -164,10 +164,11 @@ class Simulation:
         # Now create a lambda function which can evaluate the rates for all species given some set of initial conditions
         f = lambdify(symbol_list, self.eqn_list)
 
+        print(f'f val: {f(initial_vals)}')
+
         # Evaluate integral from t=0 to t=self.t_end with step size self.dt
         t_eval = np.arange(0, self.t_end, self.dt)
 
-        print(f'eqn list: {symbol_list}')
         # Evaluate our solution using scipy
         solution = scipy.integrate.solve_ivp(f, (0, self.t_end), initial_vals, t_eval=t_eval)
 
