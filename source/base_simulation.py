@@ -2,6 +2,7 @@ import json
 
 import numpy as np
 from sympy import symbols, lambdify
+import scipy.integrate
 
 # May need to change to source.base_species
 from base_species import Species
@@ -140,16 +141,37 @@ class Simulation:
         # Create array which we'll use to store our SymPy symbols
         symbol_list = [0 for i in range(len(self.species_map))]
 
+        # Create array which we'll use to store the inital values of our speciess
+        initial_vals = [0 for i in range(len(self.species_map))]
+
         # Iterate through all species in our species map, and add their symbol to the corresponding index i the symbol list
+        # Also save their initial value to an initial_value list
         for species_name, species_idx in self.species_map.items():
+
+            # Obtain the current species object
             species_obj = self.species[species_name]
+
+            # Insert in the correct position the symbol for this object
             symbol_list[species_idx] = species_obj.get_symbol()
+
+            # Insert in the correct position the initial value for this object
+            initial_vals[species_idx] = species_obj.get_value()
         
 
         symbol_list.insert(0, t)
         print(f'symbol list: {symbol_list}')
 
-        f = lambdify(symbol_list, )
+        # Now create a lambda function which can evaluate the rates for all species given some set of initial conditions
+        f = lambdify(symbol_list, self.eqn_list)
+
+        # Evaluate integral from t=0 to t=self.t_end with step size self.dt
+        t_eval = np.arange(0, self.t_end, self.dt)
+
+        print(f'eqn list: {symbol_list}')
+        # Evaluate our solution using scipy
+        solution = scipy.integrate.solve_ivp(f, (0, self.t_end), initial_vals, t_eval=t_eval)
+
+        print(f'solution: {solution}')
 
 
 
