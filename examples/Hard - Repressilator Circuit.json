@@ -1,0 +1,89 @@
+{
+  "Species": [
+    {"id": "Protein_1","initial": 0},
+    {"id": "Protein_2","initial": 0},
+    {"id": "Protein_3","initial": 0},
+    {"id": "mRNA_1","initial": 10},
+    {"id": "mRNA_2","initial": 0},
+    {"id": "mRNA_3","initial": 0}
+  ],
+  "Reactions": [
+    {"id": "Protein_1_Creation",
+      "Reactants": ["mRNA_1"],
+      "Products": ["mRNA_1", "Protein_1"],
+      "rate_law": "lambda_p1 * mRNA_1",
+      "Parameters": {"lambda_p1": 1.8}
+    },
+    {"id": "Protein_2_Creation",
+      "Reactants": ["mRNA_2"],
+      "Products": ["mRNA_2", "Protein_2"],
+      "rate_law": "lambda_p2 * mRNA_2",
+      "Parameters": {"lambda_p2": 1.8}
+    },
+    {"id": "Protein_3_Creation",
+      "Reactants": ["mRNA_3"],
+      "Products": ["mRNA_3", "Protein_3"],
+      "rate_law": "lambda_p3 * mRNA_3",
+      "Parameters": {"lambda_p3": 1.8}
+    },
+    {"id": "Protein_1_Degradation",
+      "Reactants": ["Protein_1"],
+      "Products": [],
+      "rate_law": "beta_p1 * Protein_1",
+      "Parameters": {"beta_p1": 0.027}
+    },
+    {"id": "Protein_2_Degradation",
+      "Reactants": ["Protein_2"],
+      "Products": [],
+      "rate_law": "beta_p2 * Protein_2",
+      "Parameters": {"beta_p2": 0.027}
+    },
+    {"id": "Protein_3_Degradation",
+      "Reactants": ["Protein_3"],
+      "Products": [],
+      "rate_law": "beta_p3 * Protein_3",
+      "Parameters": {"beta_p3": 0.027}
+    },
+    {"id": "mRNA_1_Degradation",
+      "Reactants": ["mRNA_1"],
+      "Products": [],
+      "rate_law": "beta_m1 * mRNA_1",
+      "Parameters": {"beta_m1": 0.1}
+    },
+    {"id": "mRNA_2_Degradation",
+      "Reactants": ["mRNA_2"],
+      "Products": [],
+      "rate_law": "beta_m2 * mRNA_2",
+      "Parameters": {"beta_m2": 0.1}
+    },
+    {"id": "mRNA_3_Degradation",
+      "Reactants": ["mRNA_3"],
+      "Products": [],
+      "rate_law": "beta_m3 * mRNA_3",
+      "Parameters": {"beta_m3": 0.1}
+    },
+    {"id": "mRNA_1_Production",
+      "Reactants": ["Protein_3"],
+      "Products": ["Protein_3", "mRNA_1"],
+      "rate_law": "(lambda_m1 * (K1 ** h1)) / ((K1 ** h1) + (Protein_3 ** h1))",
+      "Parameters": {"lambda_m1": 4.1, "K1":  7, "h1":  2}
+    },
+    {"id": "mRNA_2_Production",
+      "Reactants": ["Protein_1"],
+      "Products": ["Protein_1", "mRNA_2"],
+      "rate_law": "(lambda_m2 * (K2 ** h2)) / ((K2 ** h2) + (Protein_1 ** h2))",
+      "Parameters": {"lambda_m2": 4.1, "K2":  7, "h2":  2}
+    },
+    {"id": "mRNA_3_Production",
+      "Reactants": ["Protein_2"],
+      "Products": ["Protein_2", "mRNA_3"],
+      "rate_law": "(lambda_m3 * (K3 ** h3)) / ((K3 ** h3) + (Protein_2 ** h3))",
+      "Parameters": {"lambda_m3": 4.1, "K3":  7, "h3":  2}
+    }
+  ],
+  "Simulation": {
+    "t_end": 1500,
+    "dt": 1,
+    "method": "Euler"
+  }
+}
