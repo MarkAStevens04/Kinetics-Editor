@@ -1,6 +1,7 @@
 import json
 
 import numpy as np
+from sympy import symbols, lambdify
 
 # May need to change to source.base_species
 from base_species import Species
@@ -126,10 +127,33 @@ class Simulation:
         print(f'map: {self.species_map}')
 
 
-    def solve_via_scipy(self, species_map, eqn_list):
+    def solve_via_scipy(self):
         """
-        Solves the IVP given a species map and equation list. 
+        Solves the IVP using scipy.
+        generate_equations must have already been called to create our list of differential equations.
+        Initial values of each species must already be populated.
         """
+
+        # Generate time symbol
+        t = symbols('t')
+
+        # Create array which we'll use to store our SymPy symbols
+        symbol_list = [0 for i in range(len(self.species_map))]
+
+        # Iterate through all species in our species map, and add their symbol to the corresponding index i the symbol list
+        for species_name, species_idx in self.species_map.items():
+            species_obj = self.species[species_name]
+            symbol_list[species_idx] = species_obj.get_symbol()
+        
+
+        symbol_list.insert(0, t)
+        print(f'symbol list: {symbol_list}')
+
+        f = lambdify(symbol_list, )
+
+
+
+
 
 
     def initialize_simulation(self, JSON):
@@ -145,6 +169,8 @@ class Simulation:
         self.initialize_reactions(JSON['Reactions'])
 
         self.generate_equations()
+
+        self.solve_via_scipy()
 
 
         print(f'curr t_end: {self.t_end}')
