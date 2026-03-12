@@ -21,7 +21,7 @@
     },
     {"id": "r2",
       "Reactants": ["Invertase_Sucrose_Complex"],
-      "Products": ["Glucose", "Fructose"],
+      "Products": ["Glucose", "Fructose", "Invertase"],
       "rate_law": "k2 * Invertase_Sucrose_Complex",
       "Parameters": {"k2": 250}
     }

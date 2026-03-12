@@ -1,7 +1,10 @@
 import json
 
-from source.base_species import Species
-from source.base_reaction import Reaction
+import numpy as np
+
+# May need to change to source.base_species
+from base_species import Species
+from base_reaction import Reaction
 
 class Simulation:
     def __init__(self):
@@ -73,6 +76,52 @@ class Simulation:
 
             # Save this reaction object to the Simulation's dictionary
             self.reactions[reaction_id] = reaction_object
+    
+    def generate_equations(self):
+        """
+        Generates differential equations for the given species and reactions.
+        REQUIRES all reactions and species to already be initialized.
+        :returns: Dictionary of IDs to rate laws
+        """
+        # We must turn our unordered dictionary of items into an ordered list of differential equations.
+        # Start by creating an index map which given some species, tells us the index to refer to.
+        species_map = {}
+
+        # Create an array to store our differential equations.
+        eqn_list = []
+
+        for i, species in enumerate(self.species):
+            print(f'i: {i}, species: {species}')
+            species_map[species] = i
+            eqn_list.append(0)
+
+        # Go through all of our reactions and add their differential equations
+        for _, rxn_obj in self.reactions.items():
+
+            curr_rate_law = rxn_obj.rate_law
+
+            # To all of our REACTANTS, subtract the rate law
+            for reactant_id in rxn_obj.reactants:
+
+                # Get the index of our species in the equation list
+                spec_idx = species_map[reactant_id]
+
+                # Subtract this rate from the current species' differential equation
+                eqn_list[spec_idx] = eqn_list[spec_idx] - curr_rate_law
+
+            # To all of our PRODUCTS, add the rate law
+            for product_id in rxn_obj.products:
+
+                # Get the index of our species in the equation list
+                spec_idx = species_map[product_id]
+
+                # Add this rate to the current species' differential equation
+                eqn_list[spec_idx] = eqn_list[spec_idx] + curr_rate_law
+            
+
+        print(f'diff eqns: {eqn_list}')
+        print(f'map: {species_map}')
+        return species_map, eqn_list
 
 
 
@@ -83,11 +132,12 @@ class Simulation:
         :return:
         """
         self.initialize_self(JSON['Simulation'])
-        print(f'JSON: {JSON}')
 
         self.initialize_species(JSON['Species'])
 
         self.initialize_reactions(JSON['Reactions'])
+
+        self.generate_equations()
 
 
         print(f'curr t_end: {self.t_end}')
@@ -116,6 +166,10 @@ class Simulation:
         :return:
         """
         return self.species[species_id]
+    
+
+
+
 
 
 
