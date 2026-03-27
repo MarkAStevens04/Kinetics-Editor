@@ -1,6 +1,7 @@
 # This is what's hosting our Python server!
 from fastapi import FastAPI
 from pydantic import BaseModel
+from source.base_simulation import Simulation
 
 # Define required schema for our API requests
 class SpeciesSchema(BaseModel):
@@ -33,5 +34,11 @@ async def root():
 
 @app.post('/api/simulate')
 async def run_simulation(payload: PayloadSchema):
-    return payload
+    json_payload = payload.model_dump_json()
+    sim = Simulation()
+    sim.initialize_simulation(json_payload)
+
+    return {'message': 'successfully ran simulation'}
+
+    # return payload
 
