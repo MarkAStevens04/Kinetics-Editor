@@ -6,6 +6,15 @@ Project for PHY426 Course! Web-Based Biochemical kinetics editor.
 2) run `fastapi dev`
 3) Go on a web browser and go to the website `localhost:8000/api/health`
 
+You can view docs at: localhost:8000/docs
+
+### Check if API calls are working
+curl -d "{ 'Species': [], 'Reactions': [], 'Simulation': {'t_end': 300, 'dt': 1, 'method': 'Euler'}}" -X POST localhost:8000/api/simulate
+
+curl -X GET localhost:8000/api/health
+
+curl -X 'POST' 'localhost:8000/api/simulate' -H 'accept: application/json' -H 'Content-Type: application/json' -d '{ "Species": [{"id": "string", "initial": 0 }], "Reactions": [{"id": "string", "Reactants": ["string"], "Products": ["string"], "rate_law": "string", "Parameters": { "additionalProp1": 0, "additionalProp2": 0, "additionalProp3": 0 } }], "Simulation": {"t_end": 0, "dt": 0, "method": "string"}}'
+
 
 # Ideas
 ### Connect to enzyme databases
