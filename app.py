@@ -51,7 +51,7 @@ async def root():
 
 @app.post('/api/simulate')
 async def run_simulation(payload: PayloadSchema):
-    json_payload = payload.model_dump_json()
+    json_payload = payload.model_dump(mode='json')
     sim = Simulation()
     sim.initialize_simulation(json_payload)
 
