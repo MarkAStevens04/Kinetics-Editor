@@ -1,5 +1,6 @@
 # This is what's hosting our Python server!
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from source.base_simulation import Simulation
 
@@ -25,7 +26,23 @@ class PayloadSchema(BaseModel):
     Reactions: list[ReactionSchema]
     Simulation: SimulationSchema
 
+# Define our app
 app = FastAPI()
+
+allowed_origins = [
+    "http://localhost:5173", # Vite
+    "http://kinetics-editor.vercel.app", # Our vercel app
+    "http://biobuilder.app", # Main domain
+    "https://www.biobuilder.app", # Secure main domain
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins,
+    allow_credentials=True,
+    allow_methods=['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+    allow_headers=['Content-Type', 'Authorization']
+)
 
 @app.get('/api/health')
 async def root():
