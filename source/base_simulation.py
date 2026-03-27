@@ -6,8 +6,8 @@ import sympy
 import scipy.integrate
 
 # May need to change to source.base_species
-from base_species import Species
-from base_reaction import Reaction
+from source.base_species import Species
+from source.base_reaction import Reaction
 
 class Simulation:
     def __init__(self):
