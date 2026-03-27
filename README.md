@@ -3,7 +3,7 @@ Project for PHY426 Course! Web-Based Biochemical kinetics editor.
 
 # Get Started
 1) run `pip install -r requirements.txt`
-2) run `fastapi dev source/main.py`
+2) run `fastapi dev`
 3) Go on a web browser and go to the website `localhost:8000`
 
 
