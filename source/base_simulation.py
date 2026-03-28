@@ -202,7 +202,8 @@ class Simulation:
         labels = [name for name, idx in sorted(self.species_map.items(), key=lambda item: item[1])]
         plt.legend(labels, shadow=True)
 
-        plt.show()
+        # plt.show()
+        plt.savefig('current_graph.png')
 
         print(f'solution: {solution}')
 

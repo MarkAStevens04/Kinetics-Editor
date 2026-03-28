@@ -1,6 +1,7 @@
 # This is what's hosting our Python server!
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 from source.base_simulation import Simulation
 
@@ -49,13 +50,14 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-@app.post('/api/simulate')
+@app.post('/api/simulate', response_class=FileResponse)
 async def run_simulation(payload: PayloadSchema):
     json_payload = payload.model_dump(mode='json')
     sim = Simulation()
     sim.initialize_simulation(json_payload)
+    return 'current_graph.png'
 
-    return {'message': 'successfully ran simulation'}
+    # return {'message': 'successfully ran simulation'}
 
     # return payload
 
