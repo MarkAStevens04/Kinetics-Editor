@@ -21,6 +21,9 @@ class Simulation:
         self.species_map = {}
         self.eqn_list = []
 
+        self.solution = None
+        self.t_eval = None
+
     def initialize_self(self, JSON):
         """
         Initializes the state of the simulation using extract of json
@@ -191,19 +194,8 @@ class Simulation:
         # Evaluate our solution using scipy
         solution = scipy.integrate.solve_ivp(fun=f, t_span=(0, self.t_end), y0=initial_vals, t_eval=t_eval, args=param_vals)
 
-        # Plot our result!
-        y = solution.y
-        import matplotlib.pyplot as plt
-        plt.plot(t_eval, y.T)
-        plt.xlabel('time')
-        plt.ylabel('concentration')
-
-        # Create sorted list of labels
-        labels = [name for name, idx in sorted(self.species_map.items(), key=lambda item: item[1])]
-        plt.legend(labels, shadow=True)
-
-        # plt.show()
-        plt.savefig('current_graph.png')
+        self.solution = solution
+        self.t_eval = t_eval
 
         print(f'solution: {solution}')
 
