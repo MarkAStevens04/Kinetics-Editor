@@ -83,7 +83,7 @@ async def run_simulation(payload: PayloadSchema):
     labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
 
     # Create legend
-    ax.legend(labels, shadow=True)
+    ax.legend(labels, shadow=True, loc='upper right')
 
     buf = io.BytesIO()
     fig.savefig(buf, format='png')
