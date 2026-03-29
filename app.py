@@ -54,26 +54,39 @@ async def root():
 
 @app.post('/api/simulate', response_class=StreamingResponse)
 async def run_simulation(payload: PayloadSchema):
-    import matplotlib.pyplot as plt
+
 
     json_payload = payload.model_dump(mode='json')
     sim = Simulation()
     sim.initialize_simulation(json_payload)
 
-    # Plot our result!
+    # Import Matplotlib
+    import matplotlib.pyplot as plt
+
+    # == Plot our result! ==
+    # Pull out y values from simulation
     y = sim.solution.y
 
-    plt.plot(sim.t_eval, y.T)
-    plt.xlabel('time')
-    plt.ylabel('concentration')
+    fig = plt.figure(figsize=(6, 4))
 
-    # Create sorted list of labels
+    # Add a plot on this figure
+    ax = fig.add_subplot(111)
+
+    # Label axes
+    ax.set_xlabel('time (seconds)')
+    ax.set_ylabel('Concentration')
+
+    # Create plot
+    ax.plot(sim.t_eval, y.T)
+
+    # Create sorted list of labels (for legend)
     labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
-    plt.legend(labels, shadow=True)
-    # plt.savefig('fake_graph.png')
+
+    # Create legend
+    ax.legend(labels, shadow=True)
 
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    fig.savefig(buf, format='png')
 
     # Seek beginning of buffer
     buf.seek(0)
