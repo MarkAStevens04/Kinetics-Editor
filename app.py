@@ -1,7 +1,8 @@
 # This is what's hosting our Python server!
+import io
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from source.base_simulation import Simulation
 
@@ -52,10 +53,32 @@ async def root():
 
 @app.post('/api/simulate', response_class=FileResponse)
 async def run_simulation(payload: PayloadSchema):
+    import matplotlib.pyplot as plt
+
     json_payload = payload.model_dump(mode='json')
     sim = Simulation()
     sim.initialize_simulation(json_payload)
-    return 'current_graph.png'
+
+    # Plot our result!
+    y = sim.solution.y
+
+    plt.plot(sim.t_eval, y.T)
+    plt.xlabel('time')
+    plt.ylabel('concentration')
+
+    # Create sorted list of labels
+    labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
+    plt.legend(labels, shadow=True)
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+
+    # Seek beginning of buffer
+    buf.seek(0)
+
+    # plt.savefig('current_graph.png')
+
+    return StreamingResponse(buf, media_type="image/png")
 
     # return {'message': 'successfully ran simulation'}
 
