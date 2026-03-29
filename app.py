@@ -35,6 +35,7 @@ allowed_origins = [
     "http://localhost:5173", # Vite
     "http://kinetics-editor.vercel.app", # Our vercel app
     "http://biobuilder.app", # Main domain
+    "https://biobuilder.app", # Another secure domain
     "https://www.biobuilder.app", # Secure main domain
 ]
 
