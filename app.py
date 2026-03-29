@@ -51,7 +51,7 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-@app.post('/api/simulate', response_class=FileResponse)
+@app.post('/api/simulate', response_class=StreamingResponse)
 async def run_simulation(payload: PayloadSchema):
     import matplotlib.pyplot as plt
 
