@@ -261,6 +261,20 @@ if __name__ == '__main__':
     sim.open_json('examples/Medium - Invertase digesting sucrose.json')
     # sim.open_json('examples/Hard - Repressilator Circuit.json')
 
+    import matplotlib.pyplot as plt
+    # Plot our result!
+    y = sim.solution.y
+
+    plt.plot(sim.t_eval, y.T)
+    plt.xlabel('time')
+    plt.ylabel('concentration')
+
+    # Create sorted list of labels
+    labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
+    plt.legend(labels, shadow=True)
+
+    plt.savefig('fake_graph.png')
+
     print(f'Species:')
     for spec in sim.species:
         print(f'spec: {spec}')

@@ -69,6 +69,7 @@ async def run_simulation(payload: PayloadSchema):
     # Create sorted list of labels
     labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
     plt.legend(labels, shadow=True)
+    plt.savefig('fake_graph.png')
 
     buf = io.BytesIO()
     plt.savefig(buf, format='png')
