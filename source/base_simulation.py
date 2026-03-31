@@ -255,26 +255,47 @@ class Simulation:
 
 
 if __name__ == '__main__':
+
+    # Plots aren't always generated when the simulation is called,
+    # So we import matplotlib inside our if __name__ == "__main__" function
+    import matplotlib.pyplot as plt
+
+    # Create our simulation object
     sim = Simulation()
 
-    # sim.open_json('examples/Easy - 2 Protein Interaction.json')
-    sim.open_json('examples/Medium - Invertase digesting sucrose.json')
-    # sim.open_json('examples/Hard - Repressilator Circuit.json')
+    # ===== Pick any ONE of the following simulations. =====
 
-    import matplotlib.pyplot as plt
-    # Plot our result!
+    # sim.open_json('examples/Easy - 2 Protein Interaction.json')
+    # sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+    sim.open_json('examples/Hard - Repressilator Circuit.json')
+
+    # == Plot our result! ==
+    # Pull out y values from simulation
     y = sim.solution.y
 
-    plt.plot(sim.t_eval, y.T)
-    plt.xlabel('time')
-    plt.ylabel('concentration')
+    # Create a new figure
+    fig = plt.figure(figsize=(6, 4))
 
-    # Create sorted list of labels
+    # Add a plot on this figure
+    ax = fig.add_subplot(111)
+
+    # Label axes
+    ax.set_xlabel('time (seconds)')
+    ax.set_ylabel('Concentration')
+
+    # Create plot
+    ax.plot(sim.t_eval, y.T)
+
+    # Create sorted list of labels (for legend)
     labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
-    plt.legend(labels, shadow=True)
 
-    plt.savefig('fake_graph.png')
+    # Create legend
+    ax.legend(labels, shadow=True, loc='upper right')
 
+    # Save our figure
+    fig.savefig('simulation_result.png')
+
+    # Make sure our simulation has all the correct species and reactions populated
     print(f'Species:')
     for spec in sim.species:
         print(f'spec: {spec}')

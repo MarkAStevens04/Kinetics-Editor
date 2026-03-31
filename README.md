@@ -1,5 +1,10 @@
-# Kinetics-Editor
+# Overview
+
 Project for PHY426 Course! Web-Based Biochemical kinetics editor.
+
+Backend Simulation Engine for BioBuilder.
+
+This is the repo for the BACKEND for the BioBuilder App (built for PHY426). The frontend is accessible [HERE](https://github.com/MarkAStevens04/cloudflare-kinetics-editor).
 
 # Get Started
 1) run `pip install -r requirements.txt`
