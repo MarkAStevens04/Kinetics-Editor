@@ -258,13 +258,27 @@ class Simulation:
         y = self.solution.y
 
         # Get an ordered list of labels
-        labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
+        labels = [name for name, idx in sorted(self.species_map.items(), key=lambda item: item[1])]
 
         # Construct our return json of these values
-        return_json = {'results': [{label: y_vals.tolist()} for y_vals, label in zip(y, labels)]}
+        return_json = {'results': {label: y_vals.tolist() for y_vals, label in zip(y, labels)}}
+
+
+
+        return_json = []
+        for row, t in zip(y.T, self.t_eval):
+            curr_row = {}
+            curr_row['time'] = float(t)
+            for label, item in zip(labels, row):
+                curr_row[label] = float(item)
+            return_json.append(curr_row)
+
+        print(f'return_json: {return_json}')
+        print(f'y: {y.T}')
 
         # Add time stamps to our simulation
-        return_json['results'].append({'times': sim.t_eval.tolist()})
+        # return_json['results']['times'] = self.t_eval.tolist()
+
 
         return return_json
 
@@ -289,6 +303,11 @@ if __name__ == '__main__':
     # sim.open_json('examples/Hard - Repressilator Circuit.json')
 
     return_json = sim.get_json_solution()
+
+    y = sim.solution.y
+
+    # Get an ordered list of labels
+    labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
 
     with open('data.json', 'w') as f:
         json.dump(return_json, f)
