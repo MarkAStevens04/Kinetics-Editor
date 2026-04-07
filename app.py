@@ -24,11 +24,13 @@ class SimulationSchema(BaseModel):
     method: str
 
 class PayloadSchema(BaseModel):
-    data: list[dict[str, float]]
+    Species: list[SpeciesSchema]
+    Reactions: list[ReactionSchema]
+    Simulation: SimulationSchema
 
 
 class ReturnSpecies(BaseModel):
-    results: dict[str, list[float]]
+    data: list[dict[str, float]]
 
 # Define our app
 app = FastAPI()
@@ -55,7 +57,7 @@ async def root():
 
 
 @app.post('/api/simulate/v02')
-async def run_simulation(payload: PayloadSchema):
+async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
 
     # Put our simulation in JSON format
     json_payload = payload.model_dump(mode='json')
