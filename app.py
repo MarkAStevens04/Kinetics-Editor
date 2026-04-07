@@ -24,7 +24,7 @@ class SimulationSchema(BaseModel):
     method: str
 
 class PayloadSchema(BaseModel):
-    data: list[dict[str: float]]
+    data: list[dict[str, float]]
 
 
 class ReturnSpecies(BaseModel):
@@ -64,7 +64,9 @@ async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
     sim = Simulation()
     sim.initialize_simulation(json_payload)
 
-    return_payload = {'results': sim.get_json_solution()}
+    return_json = sim.get_json_solution()
+
+    return_payload = {'data': return_json}
 
     # Return this JSON
     return return_payload
