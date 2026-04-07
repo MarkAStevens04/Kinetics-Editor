@@ -55,7 +55,7 @@ async def root():
 
 
 @app.post('/api/simulate/v02')
-async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
+async def run_simulation(payload: PayloadSchema):
 
     # Put our simulation in JSON format
     json_payload = payload.model_dump(mode='json')
