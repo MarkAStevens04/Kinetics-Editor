@@ -1,8 +1,25 @@
+[![N|Solid](source/assets/Engine_Banner.png)](https://kinetics-editor.vercel.app/)
+
+<div align="center">
+
+[![N|Solid](https://img.shields.io/website?url=https%3A%2F%2Fbiobuilder.app%2F&label=frontend)](https://biobuilder.app/)
+[![N|Solid](https://img.shields.io/website?url=https%3A%2F%2Fkinetics-editor.vercel.app%2Fapi%2Fhealth&label=backend&cacheSeconds=600)](https://kinetics-editor.vercel.app/api/health)
+[![N|Solid](https://img.shields.io/badge/github-frontend-blue?logo=github)](https://github.com/MarkAStevens04/cloudflare-kinetics-editor)
+
+[![N|Solid](https://badgen.net/badge/icon/discord?icon=discord&label)](https://discord.gg/GmsKryYDGN) 
+[![N|Solid](https://img.shields.io/badge/-mark@biobuilder.app-blue?logo=gmail&label=Email)](mailto:mark@biobuilder.app)
+
+[![N|Solid](https://img.shields.io/badge/Give%20us%20feedback!!-magenta
+)](https://tally.so/r/VLYDpa)
+
+</div>
+
+
 # Overview
 
 Project for PHY426 Course! Web-Based Biochemical kinetics editor.
 
-Backend Simulation Engine for BioBuilder.
+**Backend Simulation** Engine for BioBuilder.
 
 This is the repo for the BACKEND for the BioBuilder App (built for PHY426). The frontend is accessible [HERE](https://github.com/MarkAStevens04/cloudflare-kinetics-editor).
 

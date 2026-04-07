@@ -28,6 +28,10 @@ class PayloadSchema(BaseModel):
     Reactions: list[ReactionSchema]
     Simulation: SimulationSchema
 
+
+class ReturnSpecies(BaseModel):
+    results: dict[str, list[float]]
+
 # Define our app
 app = FastAPI()
 
@@ -52,50 +56,17 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-@app.post('/api/simulate', response_class=StreamingResponse)
-async def run_simulation(payload: PayloadSchema):
+@app.post('/api/simulate/v02')
+async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
 
-
+    # Put our simulation in JSON format
     json_payload = payload.model_dump(mode='json')
+
+    # Run our simulation
     sim = Simulation()
     sim.initialize_simulation(json_payload)
 
-    # Import Matplotlib
-    import matplotlib.pyplot as plt
+    return_json = sim.get_json_solution()
 
-    # == Plot our result! ==
-    # Pull out y values from simulation
-    y = sim.solution.y
-
-    fig = plt.figure(figsize=(6, 4))
-
-    # Add a plot on this figure
-    ax = fig.add_subplot(111)
-
-    # Label axes
-    ax.set_xlabel('time (seconds)')
-    ax.set_ylabel('Concentration')
-
-    # Create plot
-    ax.plot(sim.t_eval, y.T)
-
-    # Create sorted list of labels (for legend)
-    labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
-
-    # Create legend
-    ax.legend(labels, shadow=True, loc='upper right')
-
-    buf = io.BytesIO()
-    fig.savefig(buf, format='png')
-
-    # Seek beginning of buffer
-    buf.seek(0)
-
-    # plt.savefig('current_graph.png')
-
-    return StreamingResponse(buf, media_type="image/png")
-
-    # return {'message': 'successfully ran simulation'}
-
-    # return payload
-
+    # Return this JSON
+    return return_json

@@ -247,7 +247,40 @@ class Simulation:
         :return:
         """
         return self.species[species_id]
-    
+
+
+    def get_json_solution(self):
+        """
+        Returns JSON representation of simulated solution!
+        :return:
+        """
+        # Extract all the concentration values
+        y = self.solution.y
+
+        # Get an ordered list of labels
+        labels = [name for name, idx in sorted(self.species_map.items(), key=lambda item: item[1])]
+
+        # Construct our return json of these values
+        return_json = {'results': {label: y_vals.tolist() for y_vals, label in zip(y, labels)}}
+
+
+
+        return_json = []
+        for row, t in zip(y.T, self.t_eval):
+            curr_row = {}
+            curr_row['time'] = float(t)
+            for label, item in zip(labels, row):
+                curr_row[label] = float(item)
+            return_json.append(curr_row)
+
+        print(f'return_json: {return_json}')
+        print(f'y: {y.T}')
+
+        # Add time stamps to our simulation
+        # return_json['results']['times'] = self.t_eval.tolist()
+
+
+        return return_json
 
 
 
@@ -266,12 +299,20 @@ if __name__ == '__main__':
     # ===== Pick any ONE of the following simulations. =====
 
     # sim.open_json('examples/Easy - 2 Protein Interaction.json')
-    # sim.open_json('examples/Medium - Invertase digesting sucrose.json')
-    sim.open_json('examples/Hard - Repressilator Circuit.json')
+    sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+    # sim.open_json('examples/Hard - Repressilator Circuit.json')
 
-    # == Plot our result! ==
-    # Pull out y values from simulation
+    return_json = sim.get_json_solution()
+
+    # Save data
+    with open('data.json', 'w') as f:
+        json.dump(return_json, f)
+
+
     y = sim.solution.y
+
+    # Get an ordered list of labels
+    labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
 
     # Create a new figure
     fig = plt.figure(figsize=(6, 4))
@@ -285,9 +326,6 @@ if __name__ == '__main__':
 
     # Create plot
     ax.plot(sim.t_eval, y.T)
-
-    # Create sorted list of labels (for legend)
-    labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
 
     # Create legend
     ax.legend(labels, shadow=True, loc='upper right')
