@@ -64,7 +64,7 @@ async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
     sim = Simulation()
     sim.initialize_simulation(json_payload)
 
-    return_json = sim.get_json_solution()
+    return_payload = {'results': sim.get_json_solution()}
 
     # Return this JSON
-    return return_json
+    return return_payload
