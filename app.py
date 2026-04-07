@@ -56,7 +56,7 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-@app.post('/api/simulate')
+@app.post('/api/simulate/v02')
 async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
 
     # Put our simulation in JSON format

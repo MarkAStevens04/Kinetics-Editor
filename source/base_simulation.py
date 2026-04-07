@@ -304,13 +304,15 @@ if __name__ == '__main__':
 
     return_json = sim.get_json_solution()
 
+    # Save data
+    with open('data.json', 'w') as f:
+        json.dump(return_json, f)
+
+
     y = sim.solution.y
 
     # Get an ordered list of labels
     labels = [name for name, idx in sorted(sim.species_map.items(), key=lambda item: item[1])]
-
-    with open('data.json', 'w') as f:
-        json.dump(return_json, f)
 
     # Create a new figure
     fig = plt.figure(figsize=(6, 4))
