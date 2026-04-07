@@ -24,9 +24,7 @@ class SimulationSchema(BaseModel):
     method: str
 
 class PayloadSchema(BaseModel):
-    Species: list[SpeciesSchema]
-    Reactions: list[ReactionSchema]
-    Simulation: SimulationSchema
+    data: list[dict[str: float]]
 
 
 class ReturnSpecies(BaseModel):
