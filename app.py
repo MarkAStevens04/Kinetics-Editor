@@ -51,7 +51,7 @@ app.add_middleware(
     allow_headers=['Content-Type', 'Authorization']
 )
 
-@app.get('/api/health')
+@app.get('/api/health', status_code=200)
 async def root():
     return {"message": "Lookin Healthy!"}
 
