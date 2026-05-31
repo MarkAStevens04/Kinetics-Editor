@@ -1,10 +1,13 @@
 # This is what's hosting our Python server!
 import io
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
 from source.base_simulation import Simulation
+
+# For helping when there's an error
+import traceback
 
 # Define required schema for our API requests
 class SpeciesSchema(BaseModel):
@@ -56,7 +59,37 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-
+# @app.post('/api/simulate/v02')
+# async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
+#
+#     # Create an error note
+#     status_msg = ''
+#
+#     # Put our simulation in JSON format
+#     try:
+#         json_payload = payload.model_dump(mode='json')
+#     except Exception as e:
+#         status_msg += e
+#
+#
+#     # Run our simulation
+#     try:
+#         sim = Simulation()
+#         sim.initialize_simulation(json_payload)
+#
+#         return_json = sim.get_json_solution()
+#
+#     except Exception as e:
+#         status_msg += e
+#         return_json = []
+#
+#     return_json.append(status_msg)
+#
+#     return_payload = {'data': return_json}
+#
+#
+#     # Return this JSON
+#     return return_payload
 
 
 
@@ -67,15 +100,22 @@ async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
     # Put our simulation in JSON format
     json_payload = payload.model_dump(mode='json')
 
+    try:
+        # Run our simulation
+        sim = Simulation()
+        sim.initialize_simulation(json_payload)
 
-    # Run our simulation
-    sim = Simulation()
-    sim.initialize_simulation(json_payload)
-
-    return_json = sim.get_json_solution()
-
-    return_payload = {'data': return_json}
-
+        return_json = sim.get_json_solution()
+    except Exception as e:
+        # Return error
+        raise HTTPException(
+            status_code=400,
+            detail={
+                "error": type(e).__name__,
+                "message": str(e),
+                "traceback": traceback.format_exc(),
+            },
+        )
 
     # Return this JSON
-    return return_payload
+    return {'data': return_json}
