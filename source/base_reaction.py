@@ -93,7 +93,7 @@ class Reaction:
         try:
             expr = parse_expr(rate_string, local_dict=symbol_dict)
         except SyntaxError as e:
-            raise ValueError(f"{self.get_id} Threw an error! Unable to parse `{rate_string}`") from e
+            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
 
         # Save this expression
         self.rate_law = expr
