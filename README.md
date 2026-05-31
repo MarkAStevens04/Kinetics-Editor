@@ -45,3 +45,36 @@ Go to Brenda Database https://www.brenda-enzymes.org/enzyme.php?ecno=3.2.1.26&Un
 Or SabioRK Database
 
 Look at enzyme in diff conditions, extrapolate some relation between them?
+
+
+# @app.post('/api/simulate/v02')
+# async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
+# 
+#     # Create an error note
+#     status_msg = ''
+# 
+#     # Put our simulation in JSON format
+#     try:
+#         json_payload = payload.model_dump(mode='json')
+#     except Exception as e:
+#         status_msg += e
+# 
+# 
+#     # Run our simulation
+#     try:
+#         sim = Simulation()
+#         sim.initialize_simulation(json_payload)
+# 
+#         return_json = sim.get_json_solution()
+# 
+#     except Exception as e:
+#         status_msg += e
+#         return_json = []
+# 
+#     return_json.append(status_msg)
+# 
+#     return_payload = {'data': return_json}
+# 
+# 
+#     # Return this JSON
+#     return return_payload
