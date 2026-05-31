@@ -95,9 +95,11 @@ class Reaction:
         except SyntaxError as e:
             raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
 
-        # if isinstance(expr, list):
-        #     raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`. Do not use square brackets in expression!")
+        # Error Checking
+        if isinstance(expr, list):
+            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`. Do not use square brackets in expression!")
 
+        # Error Checking
         try:
             test = 0 - expr
         except TypeError as e:
