@@ -100,7 +100,7 @@ class Reaction:
 
         try:
             test = 0 - expr
-        except SyntaxError as e:
+        except TypeError as e:
             raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
 
 
