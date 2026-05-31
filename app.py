@@ -56,7 +56,7 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-@app.post('/api/simulate/v02', status_code=200)
+@app.post('/api/simulate/v02')
 async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
 
     # Create an error note
