@@ -56,19 +56,34 @@ async def root():
     return {"message": "Lookin Healthy!"}
 
 
-@app.post('/api/simulate/v02')
-async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
+@app.post('/api/simulate/v02', status_code=200)
+async def run_simulation(payload: PayloadSchema, response: Response) -> ReturnSpecies:
+
+    # Create an error note
+    status_msg = ''
 
     # Put our simulation in JSON format
-    json_payload = payload.model_dump(mode='json')
+    try:
+        json_payload = payload.model_dump(mode='json')
+    except Exception as e:
+        status_msg += e
+
 
     # Run our simulation
-    sim = Simulation()
-    sim.initialize_simulation(json_payload)
+    try:
+        sim = Simulation()
+        sim.initialize_simulation(json_payload)
 
-    return_json = sim.get_json_solution()
+        return_json = sim.get_json_solution()
+
+    except Exception as e:
+        status_msg += e
+        return_json = []
+
+    return_json.append(status_msg)
 
     return_payload = {'data': return_json}
+
 
     # Return this JSON
     return return_payload
