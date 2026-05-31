@@ -108,6 +108,7 @@ async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
         return_json = sim.get_json_solution()
     except Exception as e:
         # Return error
+        print(f'ERROR: {e}')
         raise HTTPException(
             status_code=400,
             detail={
