@@ -98,8 +98,10 @@ class Reaction:
         # if isinstance(expr, list):
         #     raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`. Do not use square brackets in expression!")
 
-        if not isinstance(expr, str):
-            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`")
+        try:
+            test = 0 - expr
+        except SyntaxError as e:
+            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
 
 
         # Save this expression
