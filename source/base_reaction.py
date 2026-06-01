@@ -92,7 +92,7 @@ class Reaction:
         # Creates a sympy expression
         try:
             expr = parse_expr(rate_string, local_dict=symbol_dict)
-        except SyntaxError as e:
+        except Exception as e:
             raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
 
         # Error Checking
@@ -102,7 +102,7 @@ class Reaction:
         # Error Checking
         try:
             test = 0 - expr
-        except TypeError as e:
+        except Exception as e:
             raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
 
 
