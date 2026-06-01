@@ -93,17 +93,17 @@ class Reaction:
         try:
             expr = parse_expr(rate_string, local_dict=symbol_dict)
         except Exception as e:
-            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
+            raise ValueError(f"{self.get_id()} Invalid rate law! Unable to parse `{rate_string}`") from e
 
         # Error Checking
         if isinstance(expr, list):
-            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`. Do not use square brackets in expression!")
+            raise ValueError(f"{self.get_id()} Invalid rate law! Unable to parse `{rate_string}`. Do not use square or curly brackets in expression!")
 
         # Error Checking
         try:
             test = 0 - expr
         except Exception as e:
-            raise ValueError(f"{self.get_id()} Threw an error! Unable to parse `{rate_string}`") from e
+            raise ValueError(f"{self.get_id()} Invalid rate law! Unable to parse `{rate_string}`. Do not use square or curly brackets in expression.") from e
 
 
         # Save this expression
