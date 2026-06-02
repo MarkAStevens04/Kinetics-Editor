@@ -7,8 +7,8 @@ class Reaction:
         Initializes a reaction
         """
         self.id = None
-        self.reactants = {}
-        self.products = {}
+        self.reactants = {} # {'A': {symbol: <sympy>, coefficient: 1}}
+        self.products = {} # {'B': {symbol: <sympy>, coefficient: 2}}
         self.rate_law = None
         self.params = {}
 
@@ -19,7 +19,12 @@ class Reaction:
         :return: None
         """
         reactant_id = reactant.get_id()
-        self.reactants[reactant_id] = reactant
+        if reactant_id not in self.reactants:
+            self.reactants[reactant_id] = {'symbol': reactant, 'coefficient': 1}
+        else:
+            self.reactants[reactant_id] = {'symbol': reactant, 'coefficient': self.reactants[reactant_id]['coefficient'] + 1}
+
+        print(f'self.reactants: {self.reactants}')
 
     def add_product(self, product):
         """
@@ -28,7 +33,10 @@ class Reaction:
         :return: None
         """
         product_id = product.get_id()
-        self.products[product_id] = product
+        if product_id not in self.products:
+            self.products[product_id] = {'symbol': product, 'coefficient': 1}
+        else:
+            self.products[product_id] = {'symbol': product, 'coefficient': self.products[product_id]['coefficient'] + 1}
 
     def add_parameters(self, param_dict):
         """
@@ -69,7 +77,7 @@ class Reaction:
         # returns a  dictionary item ('Invertase', SymPy symbol for Invertase)
         def get_species_symbols(species_tuple):
             species_id = species_tuple[0]
-            species_obj = species_tuple[1]
+            species_obj = species_tuple[1]['symbol']
             return species_id, species_obj.get_symbol()
 
         # Transforms our self.reactants and self.products into dictionaries mapping their ids to symbols

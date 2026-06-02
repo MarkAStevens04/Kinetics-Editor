@@ -118,22 +118,24 @@ class Simulation:
             curr_rate_law = rxn_obj.rate_law
 
             # To all of our REACTANTS, subtract the rate law
-            for reactant_id in rxn_obj.reactants:
+            for reactant_id, reactant_info in rxn_obj.reactants.items():
 
                 # Get the index of our species in the equation list
                 spec_idx = self.species_map[reactant_id]
 
                 # Subtract this rate from the current species' differential equation
-                self.eqn_list[spec_idx] = self.eqn_list[spec_idx] - curr_rate_law
+                # Don't forget to account for coefficients
+                self.eqn_list[spec_idx] = self.eqn_list[spec_idx] - curr_rate_law * reactant_info['coefficient']
 
             # To all of our PRODUCTS, add the rate law
-            for product_id in rxn_obj.products:
+            for product_id, product_info in rxn_obj.products.items():
 
                 # Get the index of our species in the equation list
                 spec_idx = self.species_map[product_id]
 
                 # Add this rate to the current species' differential equation
-                self.eqn_list[spec_idx] = self.eqn_list[spec_idx] + curr_rate_law
+                # Don't forget to account for coefficients
+                self.eqn_list[spec_idx] = self.eqn_list[spec_idx] + curr_rate_law * product_info['coefficient']
 
         return self.species_map, self.eqn_list
 
@@ -298,8 +300,8 @@ if __name__ == '__main__':
 
     # ===== Pick any ONE of the following simulations. =====
 
-    # sim.open_json('examples/Easy - 2 Protein Interaction.json')
-    sim.open_json('examples/Medium - Invertase digesting sucrose.json')
+    sim.open_json('examples/Easy - 2 Protein Interaction.json')
+    # sim.open_json('examples/Medium - Invertase digesting sucrose.json')
     # sim.open_json('examples/Hard - Repressilator Circuit.json')
 
     return_json = sim.get_json_solution()

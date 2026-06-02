@@ -6,7 +6,7 @@
   "Reactions": [
     {"id": "r1",
       "Reactants": ["A"],
-      "Products": ["B"],
+      "Products": ["B", "B"],
       "rate_law": "k1 * A",
       "Parameters": {"k1": 0.1}
     }
