@@ -35,6 +35,7 @@ class PayloadSchema(BaseModel):
 class ReturnSpecies(BaseModel):
     data: list[dict[str, float]]
 
+
 # Define our app
 app = FastAPI()
 
@@ -120,3 +121,22 @@ async def run_simulation(payload: PayloadSchema) -> ReturnSpecies:
 
     # Return this JSON
     return {'data': return_json}
+
+
+# Little warming function that runs a tiny simulation to start our server!
+@app.get('/api/wakeup', status_code=200)
+async def wakeup():
+    # Warm imports AND first-call JIT (lambdify/scipy) so the
+    # user's first real SIMULATE is fully fast.
+    try:
+        sim = Simulation()
+        sim.initialize_simulation({
+            "Species": [{"id": "A", "initial": 1.0}],
+            "Reactions": [{"id": "r1", "Reactants": ["A"], "Products": [],
+                           "rate_law": "k*A", "Parameters": {"k": 1.0}}],
+            "Simulation": {"t_end": 1.0, "dt": 0.5, "method": "Euler"},
+        })
+        sim.get_json_solution()
+    except Exception:
+        pass
+    return {"message": "Good morning!"}
